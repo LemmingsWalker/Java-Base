@@ -7,12 +7,13 @@ import java.util.List;
  */
 public class ListDivisor<T> {
 
-    List<T> list;
+    // todo, tmp
+    public List<T> list;
 
     int subListStartIndex = 0;
     int currentGetIndex = 0;
 
-    InstanceHelper instanceHelper;
+    InstanceHelper<T> instanceHelper;
 
 
     public ListDivisor(List<T> list, InstanceHelper<T> instanceHelper) {
@@ -50,7 +51,7 @@ public class ListDivisor<T> {
         currentGetIndex = toIndex;
 
         //return list.subList(fromIndex, toIndex);
-        return new SubListGetter(fromIndex, toIndex, list);
+        return new SubListGetter<T>(fromIndex, toIndex, list);
     }
 
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
