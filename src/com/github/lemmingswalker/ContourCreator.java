@@ -5,18 +5,14 @@ package com.github.lemmingswalker;
  */
 public interface ContourCreator {
 
-    public void startOfScan();
-
-    public void setPixels(int[] pixels);
-    public void setImageSize(int w, int h);
+    public void startOfScan(int[] pixels, int w, int h);
 
     public boolean checkForExistingBlob(int index, int x, int y);
 
-    public void startContour();
+    public void startContour(int startIndex);
     public void contourCreationFail();
     public void finishedContour();
 
-    public void setContourScanStartIndex(int index);
     public void addToCornerIndexes(int index);
     public void addToEdgeIndexes(int index);
 

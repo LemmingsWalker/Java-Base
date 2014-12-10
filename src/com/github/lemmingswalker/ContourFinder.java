@@ -81,7 +81,6 @@ public class ContourFinder {
 
     float threshold = 128;
 
-
     /**
      *
      */
@@ -338,7 +337,7 @@ public class ContourFinder {
 
         // todo, check if contourCreator is set
         // rename pre and post?
-        contourCreator.startOfScan();
+        contourCreator.startOfScan(pixels, imageWidth, imageHeight);
         //contourCreator.setPixels(pixels);
         //contourCreator.setImageSize(imageWidth, imageHeight);
 

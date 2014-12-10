@@ -59,11 +59,7 @@ public class ContourWalker {
      */
     public void scan(int[] pixels, int imageWidth, int imageHeight, int start, float threshold, ContourCreator blobCreator) {
 
-        blobCreator.startContour();
-
-        blobCreator.setContourScanStartIndex(start);
-        blobCreator.setPixels(pixels);
-        blobCreator.setImageSize(imageWidth, imageHeight);
+        blobCreator.startContour(start);
 
         if (thresholdChecker == null) {
             // make one channel checker the default since it's the fastest
