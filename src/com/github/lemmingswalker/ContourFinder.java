@@ -263,6 +263,7 @@ public class ContourFinder {
 
     // . . . . . . . . . . . . . . . . . . . . . . . .
 
+    // what about an enable method?
     public ContourFinder disableROI() {
         useROI = false;
         return this;
@@ -304,7 +305,9 @@ public class ContourFinder {
 
     // . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+    public void scan(int[] pixels, int imageWidth, int imageHeight) {
+         scan(pixels, imageWidth, imageHeight, useROI ? roi : null, null, threshold, contourCreator);
+    }
 
     /**
      *
@@ -313,24 +316,35 @@ public class ContourFinder {
      * @return
      */
     // todo, methods that allow byte[] etc?
-    public void scan(int[] pixels, int imageWidth, int imageHeight) {
+    public void scan(int[] pixels, int imageWidth, int imageHeight, Rectangle roi, ThresholdChecker thresholdChecker, float threshold, ContourCreator contourCreator) {
 
         if (!didInit) init();
 
-        // todo, check if contourCreator is set
-        // rename pre and post?
-        contourCreator.startOfScan(pixels, imageWidth, imageHeight);
-        //contourCreator.setPixels(pixels);
-        //contourCreator.setImageSize(imageWidth, imageHeight);
+        if (thresholdChecker == null) {
+            thresholdChecker = contourWalker.getThresholdChecker();
+        }
+
+        if (contourCreator == null) {
+            if (this.contourCreator == null)
+            throw new NullPointerException("No ContourCreator has been set!");
+
+            contourCreator = this.contourCreator;
+        }
+
         borderBackupCreator.set(pixels, imageWidth, imageHeight);
 
-        // thresholdChecker can't be null since init takes care of that
-        ThresholdChecker thresholdChecker = contourWalker.thresholdChecker;
+        // get the region of interest right
+        if (roi == null) roi = useROI ? this.roi : null;
+
+        if (useROI) {
+            // in case it exceeds the bottom or left/right edge
+            Rectangle2D tmpROI = roi.createIntersection(new Rectangle(0, 0, imageWidth, imageHeight));
+            wROI = new Rectangle((int) tmpROI.getX(), (int) tmpROI.getY(), (int) tmpROI.getWidth(), (int) tmpROI.getHeight());
+        } else {
+            wROI = new Rectangle(0, 0, imageWidth, imageHeight);
+        }
 
 
-        roiCreator.set(pixels, imageWidth);
-
-        wROI = createWorkROI(imageWidth, imageHeight);
         if (backupBorder) borderBackupCreator.backupBorder(wROI.x, wROI.y, wROI.width, wROI.height);
         borderBackupCreator.createBorder(wROI.x, wROI.y, wROI.width, wROI.height, borderColor);
 
@@ -346,7 +360,6 @@ public class ContourFinder {
         int currentColor;
 
         float currentColorValue, lastColorValue;
-        final float t = threshold;
 
         lastColorValue = thresholdChecker.check(borderColor);
 
@@ -361,6 +374,9 @@ public class ContourFinder {
         final int maxY = wROI.y + wROI.height;
 
 
+        // todo, pass roi to contourCreator?
+        contourCreator.startOfScan(pixels, imageWidth, imageHeight);
+
         for (int x = startX; x < maxX; x+= xIncrement) {
             for (int y = startY; y < maxY; y+= yIncrement) {
 
@@ -369,11 +385,11 @@ public class ContourFinder {
                 currentColor = pixels[index];
                 currentColorValue = thresholdChecker.check(currentColor);
 
-                if (currentColorValue >= t && lastColorValue < t) { // edge
+                if (currentColorValue >= threshold && lastColorValue < threshold) { // edge
 
                     if (!contourCreator.checkForExistingBlob(index, x, y)) {
 
-                        contourWalker.scan(pixels, imageWidth, imageHeight, index, threshold, contourCreator);
+                        contourWalker.scan(pixels, imageWidth, imageHeight, index, thresholdChecker, threshold, contourCreator);
 
                     }
                 }
@@ -389,34 +405,6 @@ public class ContourFinder {
 
     }
 
-
-
-    // . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-    /**
-     *
-     * This takes care of a ROI exceeding the bounds of the image.
-     *
-     * @param imageWidth
-     * @param imageHeight
-     * @return
-     */
-    private Rectangle createWorkROI(int imageWidth, int imageHeight) {
-
-        Rectangle wROI;
-
-        if (useROI) {
-            // in case it exceeds the bottom or left/right edge
-            Rectangle2D tmpROI = roi.createIntersection(new Rectangle(0, 0, imageWidth, imageHeight));
-            wROI = new Rectangle((int)tmpROI.getX(), (int)tmpROI.getY(), (int)tmpROI.getWidth(), (int)tmpROI.getHeight());
-        }
-        else {
-            wROI = new Rectangle(0, 0, imageWidth, imageHeight);
-        }
-
-        return wROI;
-    }
 
 
     // . . . . . . . . . . . . . . . . . . . . . . . .
