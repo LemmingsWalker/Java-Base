@@ -171,6 +171,12 @@ public class ContourFinder {
         return this;
     }
 
+    // . . . . . . . . . . . . . . . . . . . . . . . .
+
+    public ContourFinder setScanIncrement(int x, int y) {
+        setScanIncrementX(x);
+        return setScanIncrementY(y);
+    }
 
     // . . . . . . . . . . . . . . . . . . . . . . . .
 
