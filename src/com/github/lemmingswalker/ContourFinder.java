@@ -277,30 +277,6 @@ public class ContourFinder {
 
     // . . . . . . . . . . . . . . . . . . . . . . . .
 
-    /**
-     * Convenient way to set the thresholdChecker in contourWalker.
-     *
-     * @param thresholdChecker
-     * @return
-     */
-    public ContourFinder setThresholdChecker(ThresholdChecker thresholdChecker) {
-        contourWalker.setThresholdTracker(thresholdChecker);
-        return this;
-    }
-
-    // . . . . . . . . . . . . . . . . . . . . . . . .
-
-    /**
-     * Convenient way to get the thresholdChecker of the contourWalker.
-     *
-     * @return
-     */
-    public ThresholdChecker getThresholdChecker() {
-        return contourWalker.thresholdChecker;
-    }
-
-    // . . . . . . . . . . . . . . . . . . . . . . . .
-
     public ContourFinder setThreshold(float threshold) {
         this.threshold = threshold;
         return this;
