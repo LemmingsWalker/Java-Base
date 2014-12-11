@@ -9,9 +9,9 @@ public interface ContourCreator {
 
     public boolean checkForExistingBlob(int index, int x, int y);
 
-    public void startContour(int startIndex);
+    public void startContour(int startIndex, int[] pixels, int w, int h);
     public void contourCreationFail();
-    public void finishedContour();
+    public void finishContour(int[] pixels, int w, int h);
 
     public void addToCornerIndexes(int index);
     public void addToEdgeIndexes(int index);
