@@ -66,7 +66,6 @@ public class ContourWalker {
             thresholdChecker = new ThresholdCheckerOneChannel();
         }
 
-        final float t = threshold;
         float valueDown, valueUp, valueLeft, valueRight;
 
         UP = -imageWidth;
@@ -82,10 +81,10 @@ public class ContourWalker {
 
 
         // or we don't add it!
-        downIsFree = valueDown >= t;
-        rightIsFree = valueRight >= t;
-        upIsFree =  valueUp >= t;
-        leftIsFree = valueLeft >= t;
+        downIsFree = valueDown >= threshold;
+        rightIsFree = valueRight >= threshold;
+        upIsFree =  valueUp >= threshold;
+        leftIsFree = valueLeft >= threshold;
 
         // todo: 1 line starting point blob
         // if we would check all surrounding pixels
@@ -129,7 +128,7 @@ public class ContourWalker {
 
             valueMoveDirection =  thresholdChecker.check(pixels[current + moveDirection]);
 
-            if (valueMoveDirection >= t) {
+            if (valueMoveDirection >= threshold) {
 
                 blobCreator.addToEdgeIndexes(current);
 
@@ -141,7 +140,7 @@ public class ContourWalker {
 
                 valueCurrentDirection =  thresholdChecker.check(pixels[current + checkDirection]);
 
-                if (valueCurrentDirection >= t) {
+                if (valueCurrentDirection >= threshold) {
 
                     blobCreator.addToCornerIndexes(current);
 
