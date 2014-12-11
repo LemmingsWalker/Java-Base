@@ -36,6 +36,10 @@ public class ContourWalker {
     // . . . . . . . . . . . . . . . . . . . . . . . .
 
     public ThresholdChecker getThresholdChecker() {
+        if (thresholdChecker == null) {
+            // make one channel checker the default since it's the fastest
+            thresholdChecker = new ThresholdCheckerOneChannel();
+        }
         return thresholdChecker;
     }
 
@@ -45,7 +49,10 @@ public class ContourWalker {
 
         int start = startY*imageWidth+startX;
 
-        scan(pixels, imageWidth, imageHeight, start, threshold, blobCreator);
+        // avoid it being null
+        thresholdChecker = getThresholdChecker();
+
+        scan(pixels, imageWidth, imageHeight, start, thresholdChecker, threshold, blobCreator);
     }
 
 
@@ -57,14 +64,9 @@ public class ContourWalker {
      * @param threshold
      * @return
      */
-    public void scan(int[] pixels, int imageWidth, int imageHeight, int startIndex, float threshold, ContourCreator blobCreator) {
+    public void scan(int[] pixels, int imageWidth, int imageHeight, int startIndex, ThresholdChecker thresholdChecker, float threshold, ContourCreator blobCreator) {
 
         blobCreator.startContour(startIndex, pixels, imageWidth, imageHeight);
-
-        if (thresholdChecker == null) {
-            // make one channel checker the default since it's the fastest
-            thresholdChecker = new ThresholdCheckerOneChannel();
-        }
 
         float valueDown, valueUp, valueLeft, valueRight;
 
