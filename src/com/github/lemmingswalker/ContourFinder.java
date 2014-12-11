@@ -66,7 +66,7 @@ public class ContourFinder {
     Rectangle roi; // the one the user sets
     Rectangle wROI; // the one we work with
     // the class that backups, create and restores a roi.
-    ROICreator roiCreator;
+    BorderBackupCreator borderBackupCreator;
 
     // there can be a slight speed
     // increase if not backing up the
@@ -130,7 +130,7 @@ public class ContourFinder {
             contourWalker.setThresholdTracker(new ThresholdCheckerOneChannel());
         }
 
-        roiCreator = new ROICreator();
+        borderBackupCreator = new BorderBackupCreator();
 
         if (roi == null) {
             roi = new Rectangle();
@@ -346,6 +346,7 @@ public class ContourFinder {
         contourCreator.startOfScan(pixels, imageWidth, imageHeight);
         //contourCreator.setPixels(pixels);
         //contourCreator.setImageSize(imageWidth, imageHeight);
+        borderBackupCreator.set(pixels, imageWidth, imageHeight);
 
         // thresholdChecker can't be null since init takes care of that
         ThresholdChecker thresholdChecker = contourWalker.thresholdChecker;
@@ -354,8 +355,8 @@ public class ContourFinder {
         roiCreator.set(pixels, imageWidth);
 
         wROI = createWorkROI(imageWidth, imageHeight);
-        if (backupBorder) roiCreator.backupBorder(wROI.x, wROI.y, wROI.width, wROI.height);
-        roiCreator.createBorder(wROI.x, wROI.y, wROI.width, wROI.height, borderColor);
+        if (backupBorder) borderBackupCreator.backupBorder(wROI.x, wROI.y, wROI.width, wROI.height);
+        borderBackupCreator.createBorder(wROI.x, wROI.y, wROI.width, wROI.height, borderColor);
 
 
         // first scan with lines
@@ -406,7 +407,7 @@ public class ContourFinder {
         }
 
 
-        if (backupBorder) roiCreator.restoreBorder();
+        if (backupBorder) borderBackupCreator.restoreBorder();
 
         contourCreator.finishOfScan();
 

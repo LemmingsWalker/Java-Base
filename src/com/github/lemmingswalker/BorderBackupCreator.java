@@ -4,13 +4,14 @@ package com.github.lemmingswalker;
 /**
  * Created by doekewartena on 6/8/14.
  */
-public class ROICreator {
+public class BorderBackupCreator {
 
     // pixels to operate on
     int[] pixels;
 
-    // getWidth of the image to operate on
+    // width and height of the image to operate on
     int width;
+    int height;
 
 
     // used to create a backup
@@ -23,9 +24,10 @@ public class ROICreator {
     // . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-    public void set(int[] pixels, int width) {
+    public void set(int[] pixels, int width, int height) {
         this.pixels = pixels;
         this.width = width;
+        this.height = height;
     }
 
 
@@ -34,7 +36,6 @@ public class ROICreator {
             // todo throw nullPointerException?
             System.err.println("ERROR in ROICreator: set has to be called before backupBorder");
         }
-        int height = pixels.length/width;
         backupBorder(0, 0, width, height);
     }
 
