@@ -81,6 +81,8 @@ public class ContourFinder {
 
     float threshold = 128;
 
+    int scanId;
+
     /**
      *
      */
@@ -348,6 +350,7 @@ public class ContourFinder {
         if (backupBorder) borderBackupCreator.backupBorder(wROI.x, wROI.y, wROI.width, wROI.height);
         borderBackupCreator.createBorder(wROI.x, wROI.y, wROI.width, wROI.height, borderColor);
 
+        scanId++;
 
         // first scan with lines
         // if a pixel is blobColor
@@ -373,8 +376,6 @@ public class ContourFinder {
         final int maxX = wROI.x + wROI.width;
         final int maxY = wROI.y + wROI.height;
 
-
-        // todo, pass roi to contourCreator?
         contourCreator.startOfScan(pixels, imageWidth, imageHeight);
 
         for (int x = startX; x < maxX; x+= xIncrement) {
@@ -385,13 +386,9 @@ public class ContourFinder {
                 currentColor = pixels[index];
                 currentColorValue = thresholdChecker.check(currentColor);
 
-                if (currentColorValue >= threshold && lastColorValue < threshold) { // edge
+                if (currentColorValue >= threshold && lastColorValue < threshold) { // edge / corner
 
-                    if (!contourCreator.checkForExistingBlob(index, x, y)) {
-
-                        contourWalker.scan(pixels, imageWidth, imageHeight, index, thresholdChecker, threshold, contourCreator);
-
-                    }
+                    contourWalker.scan(pixels, imageWidth, imageHeight, index, thresholdChecker, threshold, contourCreator, scanId);
                 }
 
                 lastColorValue = currentColorValue;

@@ -20,6 +20,9 @@ public class ContourWalker {
     ThresholdChecker thresholdChecker;
 
 
+    // we store here for every edge index the contourExistCheckValue
+    // this we we can check fast if a blob exists or not
+    int[] contourExistCheckData;
 
     public ContourWalker() {
     }
@@ -45,14 +48,14 @@ public class ContourWalker {
 
 
 
-    public void scan(int[] pixels, int imageWidth, int imageHeight, int startX, int startY, float threshold, ContourCreator blobCreator) {
+    public void scan(int[] pixels, int imageWidth, int imageHeight, int startX, int startY, float threshold, ContourCreator blobCreator, int scanID) {
 
         int start = startY*imageWidth+startX;
 
         // avoid it being null
         thresholdChecker = getThresholdChecker();
 
-        scan(pixels, imageWidth, imageHeight, start, thresholdChecker, threshold, blobCreator);
+        scan(pixels, imageWidth, imageHeight, start, thresholdChecker, threshold, blobCreator, scanID);
     }
 
 
@@ -64,7 +67,14 @@ public class ContourWalker {
      * @param threshold
      * @return
      */
-    public void scan(int[] pixels, int imageWidth, int imageHeight, int startIndex, ThresholdChecker thresholdChecker, float threshold, ContourCreator blobCreator) {
+    public void scan(int[] pixels, int imageWidth, int imageHeight, int startIndex, ThresholdChecker thresholdChecker, float threshold, ContourCreator blobCreator, int scanID) {
+
+        if (contourExistCheckData == null || contourExistCheckData.length < pixels.length) {
+            contourExistCheckData = new int[pixels.length];
+        }
+
+        // we already have the contour, or a new image is scanned without a new scanId
+        if (contourExistCheckData[startIndex] == scanID) return;
 
         blobCreator.startContour(startIndex, pixels, imageWidth, imageHeight);
 
@@ -145,6 +155,7 @@ public class ContourWalker {
             if (valueMoveDirection >= threshold) {
 
                 blobCreator.addEdge(current, x, y);
+                contourExistCheckData[current] = scanID;
 
                 current += moveDirection;
                 x = current % imageWidth;
@@ -209,6 +220,7 @@ public class ContourWalker {
 
 
     }
+
 
     // . . . . . . . . . . . . . . . . . . . . . . .
 
