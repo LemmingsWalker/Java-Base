@@ -7,8 +7,6 @@ public interface ContourCreator {
 
     public void startOfScan(int[] pixels, int w, int h);
 
-    public boolean checkForExistingBlob(int index, int x, int y);
-
     public void startContour(int startIndex, int[] pixels, int imageWidth, int imageHeight);
     public void contourCreationFail(); // String reason?
     public void finishContour(int[] pixels, int imageWidth, int imageHeight);
