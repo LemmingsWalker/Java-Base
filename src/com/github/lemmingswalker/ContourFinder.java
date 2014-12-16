@@ -50,10 +50,10 @@ public class ContourFinder {
 
     public ContourWalker contourWalker;
 
-    // instead of scanning every row
+    // instead of scanning every row/column
     // we jump with increments
-    private int scanIncrementX = 32;
-    private int scanIncrementY = 32;
+    private int jumpIncrement = 16;
+    boolean scanOverX = true;
 
     ContourCreator contourCreator;
 
@@ -154,45 +154,26 @@ public class ContourFinder {
      * @param i
      * @return
      */
-    public ContourFinder setScanIncrementX(int i) {
-        scanIncrementX = Common.max(i, 1);
+    public ContourFinder setJumpIncrement(int i) {
+        jumpIncrement = i > 0 ? i : 1;
         return this;
     }
 
     // . . . . . . . . . . . . . . . . . . . . . . . .
 
-    /**
-     * Set a manual value for how much it must jump when scanning the
-     * pixels for blobs.
-     *
-     * @param i
-     * @return
-     */
-    public ContourFinder setScanIncrementY(int i) {
-        scanIncrementY = Common.max(i, 1);
+    public int getJumpIncrement() {
+        return jumpIncrement;
+    }
+
+    // . . . . . . . . . . . . . . . . . . . . . . . .
+
+    public ContourFinder setScanOverX(boolean scanOverX) {
+        this.scanOverX = scanOverX;
         return this;
     }
 
     // . . . . . . . . . . . . . . . . . . . . . . . .
 
-    public ContourFinder setScanIncrement(int x, int y) {
-        setScanIncrementX(x);
-        return setScanIncrementY(y);
-    }
-
-    // . . . . . . . . . . . . . . . . . . . . . . . .
-
-    public int getScanIncrementX() {
-        return scanIncrementX;
-    }
-
-    // . . . . . . . . . . . . . . . . . . . . . . . .
-
-    public int getScanIncrementY() {
-        return scanIncrementY;
-    }
-
-    // . . . . . . . . . . . . . . . . . . . . . . . .
 
     public ContourFinder setContourCreator(ContourCreator contourCreator) {
         this.contourCreator = contourCreator;
@@ -211,16 +192,15 @@ public class ContourFinder {
 
     /**
     Returns true if it will scan over the x axis.
-    It will scan over whichever increment is the biggest.
     */
-    public boolean overX() {
-        return scanIncrementX > scanIncrementY;
+    public boolean isScanOverX() {
+        return scanOverX;
     }
 
     // . . . . . . . . . . . . . . . . . . . . . . . .
 
-    public boolean overY() {
-        return !overX();
+    public boolean isScanOverY() {
+        return !isScanOverX();
     }
 
     // . . . . . . . . . . . . . . . . . . . . . . . .
@@ -367,12 +347,12 @@ public class ContourFinder {
         lastColorValue = thresholdChecker.check(borderColor);
 
 
-        final boolean overX = overX();
+        final boolean overX = isScanOverX();
 
-        final int xIncrement = overX ? 1 : scanIncrementX;
-        final int yIncrement = overX ? scanIncrementY : 1;
-        final int startX = overX ? wROI.x : wROI.x + scanIncrementX;
-        final int startY = overX ? wROI.y + scanIncrementY : wROI.y;
+        final int xIncrement = overX ? 1 : jumpIncrement;
+        final int yIncrement = overX ? jumpIncrement : 1;
+        final int startX = overX ? wROI.x : wROI.x + jumpIncrement;
+        final int startY = overX ? wROI.y + jumpIncrement : wROI.y;
         final int maxX = wROI.x + wROI.width;
         final int maxY = wROI.y + wROI.height;
 
